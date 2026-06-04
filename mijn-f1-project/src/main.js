@@ -1,6 +1,31 @@
 // main.js — tab navigation + drivers API
 console.log('Pitwall F1 Hub loaded');
 
+// ─── Dark mode ───────────────────────────────────────────
+
+const themeToggle = document.getElementById('toggle');
+
+// Check if the user already had a preference saved in localStorage
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+  // Apply dark mode immediately on load
+  document.body.classList.add('dark');
+  themeToggle.checked = true;
+}
+
+// When the checkbox is toggled, switch dark mode on or off
+themeToggle.addEventListener('change', () => {
+  if (themeToggle.checked) {
+    // Turn on dark mode and save to localStorage
+    document.body.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    // Turn off dark mode and save to localStorage
+    document.body.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }
+});
+
 // ─── Tab switching ───────────────────────────────────────────
 
 // Grab all tab buttons from the nav
