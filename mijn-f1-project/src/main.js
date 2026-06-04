@@ -284,8 +284,14 @@ function renderCircuits(circuits) {
 
 // ─── Calendar API ───────────────────────────────────────────
 
-// The section where we'll render the calendar
-const calendarSection = document.getElementById('tab-calendar');
+// The div where the calendar list gets rendered
+const calendarList = document.getElementById('calendar-list');
+
+// Store all races so we can re-filter without fetching again
+let allRaces = [];
+
+// Today's date for comparing with race dates
+const today = new Date();
 
 // Fetch all races from the current season
 async function loadCalendar() {
@@ -294,18 +300,34 @@ async function loadCalendar() {
     const data = await response.json();
 
     // Races are stored under RaceTable.Races
-    const races = data.MRData.RaceTable.Races;
+    allRaces = data.MRData.RaceTable.Races;
 
-    renderCalendar(races);
+    renderCalendar(allRaces);
   } catch (error) {
-    calendarSection.innerHTML = '<h2>Calendar</h2><p>Failed to load calendar. Please try again.</p>';
+    calendarList.innerHTML = '<p>Failed to load calendar. Please try again.</p>';
     console.error('Error fetching calendar:', error);
   }
 }
 
+// Filter races when dropdown changes
+document.getElementById('calendar-filter').addEventListener('change', (e) => {
+  const value = e.target.value;
+
+  // Filter based on whether the race date is in the past or future
+  const filtered = allRaces.filter(race => {
+    const raceDate = new Date(race.date);
+    // Ternary: if 'past' check date is before today, if 'upcoming' check after
+    return value === 'all' ? true
+      : value === 'past' ? raceDate < today
+      : raceDate >= today;
+  });
+
+  renderCalendar(filtered);
+});
+
 // Build the HTML for the calendar
 function renderCalendar(races) {
-  let html = '<h2>Calendar</h2><ol>';
+  let html = '<ol>';
 
   races.forEach(race => {
     // Each race has a round, raceName, date and Circuit object
@@ -318,7 +340,7 @@ function renderCalendar(races) {
   });
 
   html += '</ol>';
-  calendarSection.innerHTML = html;
+  calendarList.innerHTML = html;
 }
 
 // ─── Standings API ───────────────────────────────────────────

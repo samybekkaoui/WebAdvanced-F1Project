@@ -100,7 +100,14 @@
 
       <section id="tab-calendar" hidden>
         <h2>Calendar</h2>
-        <p>Loading calendar...</p>
+        <!-- Filter dropdown -->
+        <select id="calendar-filter">
+          <option value="all">All races</option>
+          <option value="past">Past races</option>
+          <option value="upcoming">Upcoming races</option>
+        </select>
+        <!-- Calendar list gets rendered here by JS -->
+        <div id="calendar-list"></div>
       </section>
 
       <section id="tab-circuits" hidden>
