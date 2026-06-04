@@ -26,19 +26,57 @@
 
   <nav class="tabs">
     <div class="tabs__inner">
-      <button class="tab" aria-selected="true">Home</button>
-      <button class="tab" aria-selected="false">Standings</button>
-      <button class="tab" aria-selected="false">Drivers</button>
-      <button class="tab" aria-selected="false">Teams</button>
-      <button class="tab" aria-selected="false">Calendar</button>
-      <button class="tab" aria-selected="false">Circuits</button>
-      <button class="tab" aria-selected="false">Results</button>
+      <button class="tab" data-tab="home" aria-selected="true">Home</button>
+      <button class="tab" data-tab="standings" aria-selected="false">Standings</button>
+      <button class="tab" data-tab="drivers" aria-selected="false">Drivers</button>
+      <button class="tab" data-tab="teams" aria-selected="false">Teams</button>
+      <button class="tab" data-tab="calendar" aria-selected="false">Calendar</button>
+      <button class="tab" data-tab="circuits" aria-selected="false">Circuits</button>
+      <button class="tab" data-tab="results" aria-selected="false">Results</button>
     </div>
   </nav>
 
   <main class="main">
     <div class="wrap">
-      <p>Create different tabs per category</p>
+
+      <!-- Each section matches a tab. Only one is visible at a time. -->
+      <!-- JS will show/hide these based on which tab is clicked. -->
+
+      <section id="tab-home">
+        <h2>Home</h2>
+        <p>Welcome to Pitwall, your F1 data hub. More content coming soon.</p>
+      </section>
+
+      <section id="tab-standings" hidden>
+        <h2>Standings</h2>
+        <p>Driver and constructor standings will appear here.</p>
+      </section>
+
+      <section id="tab-drivers" hidden>
+        <h2>Drivers</h2>
+        <p>All F1 drivers will be listed here.</p>
+      </section>
+
+      <section id="tab-teams" hidden>
+        <h2>Teams</h2>
+        <p>All F1 teams will be listed here.</p>
+      </section>
+
+      <section id="tab-calendar" hidden>
+        <h2>Calendar</h2>
+        <p>The full race calendar will appear here.</p>
+      </section>
+
+      <section id="tab-circuits" hidden>
+        <h2>Circuits</h2>
+        <p>All circuits on the calendar will appear here.</p>
+      </section>
+
+      <section id="tab-results" hidden>
+        <h2>Results</h2>
+        <p>Race results per round will appear here.</p>
+      </section>
+
     </div>
   </main>
 
