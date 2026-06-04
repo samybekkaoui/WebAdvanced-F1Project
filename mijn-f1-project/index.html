@@ -49,7 +49,17 @@
 
       <section id="tab-standings" hidden>
         <h2>Standings</h2>
-        <p>Driver and constructor standings will appear here.</p>
+        <!-- Two columns side by side: drivers left, constructors right -->
+        <div style="display: flex; gap: 40px;">
+          <div id="driver-standings">
+            <h3>Drivers</h3>
+            <p>Loading...</p>
+          </div>
+          <div id="constructor-standings">
+            <h3>Constructors</h3>
+            <p>Loading...</p>
+          </div>
+        </div>
       </section>
 
       <section id="tab-drivers" hidden>

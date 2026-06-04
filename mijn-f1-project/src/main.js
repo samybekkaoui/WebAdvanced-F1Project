@@ -131,7 +131,126 @@ function renderTeams(teams) {
   teamsSection.innerHTML = html;
 }
 
+// ─── Circuits API ───────────────────────────────────────────
+
+// The section where we'll render the circuits
+const circuitsSection = document.getElementById('tab-circuits');
+
+// Fetch all circuits from the current season
+async function loadCircuits() {
+  try {
+    // Call the API - circuits from 2026 season
+    const response = await fetch('https://api.jolpi.ca/ergast/f1/2026/circuits/');
+
+    const data = await response.json();
+
+    // Jolpica stores circuits under CircuitTable.Circuits
+    const circuits = data.MRData.CircuitTable.Circuits;
+
+    renderCircuits(circuits);
+  } catch (error) {
+    circuitsSection.innerHTML = '<h2>Circuits</h2><p>Failed to load circuits. Please try again.</p>';
+    console.error('Error fetching circuits:', error);
+  }
+}
+
+// Build the HTML for the circuits list and put it on the page
+function renderCircuits(circuits) {
+  let html = '<h2>Circuits</h2><ul>';
+
+  circuits.forEach(circuit => {
+    // Each circuit has a name, location and country
+    html += `
+      <li>
+        <strong>${circuit.circuitName}</strong>
+        (${circuit.Location.locality}, ${circuit.Location.country})
+      </li>
+    `;
+  });
+
+  html += '</ul>';
+
+  circuitsSection.innerHTML = html;
+}
+
+// ─── Standings API ───────────────────────────────────────────
+
+// The two divs inside the standings section
+const driverStandingsDiv = document.getElementById('driver-standings');
+const constructorStandingsDiv = document.getElementById('constructor-standings');
+
+// Fetch driver standings for the current season
+async function loadDriverStandings() {
+  try {
+    const response = await fetch('https://api.jolpi.ca/ergast/f1/2026/driverstandings/');
+    const data = await response.json();
+
+    // The standings are nested a few levels deep
+    const standings = data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
+
+    renderDriverStandings(standings);
+  } catch (error) {
+    driverStandingsDiv.innerHTML = '<h3>Drivers</h3><p>Failed to load.</p>';
+    console.error('Error fetching driver standings:', error);
+  }
+}
+
+// Build the HTML for driver standings
+function renderDriverStandings(standings) {
+  let html = '<h3>Drivers</h3><ol>';
+
+  standings.forEach(entry => {
+    // Each entry has a position, Driver object and points
+    html += `
+      <li>
+        <strong>${entry.Driver.givenName} ${entry.Driver.familyName}</strong>
+        — ${entry.points} pts
+      </li>
+    `;
+  });
+
+  html += '</ol>';
+  driverStandingsDiv.innerHTML = html;
+}
+
+// Fetch constructor standings for the current season
+async function loadConstructorStandings() {
+  try {
+    const response = await fetch('https://api.jolpi.ca/ergast/f1/2026/constructorstandings/');
+    const data = await response.json();
+
+    // Same nested structure as driver standings
+    const standings = data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
+
+    renderConstructorStandings(standings);
+  } catch (error) {
+    constructorStandingsDiv.innerHTML = '<h3>Constructors</h3><p>Failed to load.</p>';
+    console.error('Error fetching constructor standings:', error);
+  }
+}
+
+// Build the HTML for constructor standings
+function renderConstructorStandings(standings) {
+  let html = '<h3>Constructors</h3><ol>';
+
+  standings.forEach(entry => {
+    // Each entry has a Constructor object and points
+    html += `
+      <li>
+        <strong>${entry.Constructor.name}</strong>
+        — ${entry.points} pts
+      </li>
+    `;
+  });
+
+  html += '</ol>';
+  constructorStandingsDiv.innerHTML = html;
+}
+
 // Run the fetch when the page loads
 loadDrivers();
 loadConstructors();
+loadCircuits();
+loadDriverStandings();
+loadConstructorStandings();
 
