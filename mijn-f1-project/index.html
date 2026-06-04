@@ -68,12 +68,26 @@
 
       <section id="tab-drivers" hidden>
         <h2>Drivers</h2>
-        <p>Loading drivers...</p>
+        <!-- Sort dropdown -->
+        <select id="drivers-sort">
+          <option value="default">Sort by...</option>
+          <option value="az">Name A → Z</option>
+          <option value="za">Name Z → A</option>
+        </select>
+        <!-- Drivers list gets rendered here by JS -->
+        <div id="drivers-list"></div>
       </section>
 
       <section id="tab-teams" hidden>
         <h2>Teams</h2>
-        <p>All F1 teams will be listed here.</p>
+        <!-- Sort dropdown -->
+        <select id="teams-sort">
+          <option value="default">Sort by...</option>
+          <option value="az">Name A → Z</option>
+          <option value="za">Name Z → A</option>
+        </select>
+        <!-- Teams list gets rendered here by JS -->
+        <div id="teams-list"></div>
       </section>
 
       <section id="tab-calendar" hidden>

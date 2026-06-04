@@ -67,6 +67,11 @@ tabButtons.forEach(btn => {
 
 // The section where we'll render the drivers
 const driversSection = document.getElementById('tab-drivers');
+// The div inside the section where the list goes (keeps sort buttons safe)
+const driversList = document.getElementById('drivers-list');
+
+// Store the fetched drivers so we can re-sort without fetching again
+let allDrivers = [];
 
 // Fetch all drivers from the API
 async function loadDrivers() {
@@ -76,24 +81,37 @@ async function loadDrivers() {
 
     // Jolpica wraps the data a few levels deep
     const data = await response.json();
-    const drivers = data.MRData.DriverTable.Drivers;
+    allDrivers = data.MRData.DriverTable.Drivers;
 
-    // Show the drivers on the page
-    renderDrivers(drivers);
+    // Show the drivers on the page (default order from API)
+    renderDrivers(allDrivers);
 
   } catch (error) {
     // If something goes wrong, show an error message
-    driversSection.innerHTML = '<h2>Drivers</h2><p>Failed to load drivers. Please try again.</p>';
+    driversList.innerHTML = '<p>Failed to load drivers. Please try again.</p>';
     console.error('Error fetching drivers:', error);
   }
 }
 
+// Sort drivers when dropdown changes
+document.getElementById('drivers-sort').addEventListener('change', (e) => {
+  const value = e.target.value;
+
+  // Use a ternary to decide sort direction
+  const sorted = allDrivers.slice().sort((a, b) =>
+    value === 'az'
+      ? a.familyName.localeCompare(b.familyName)
+      : b.familyName.localeCompare(a.familyName)
+  );
+
+  // Only re-render if a real option was chosen
+  if (value !== 'default') renderDrivers(sorted);
+});
+
 // Build the HTML for the drivers list and put it on the page
 function renderDrivers(drivers) {
-  // Start with the section title
-  let html = '<h2>Drivers</h2><ul>';
+  let html = '<ul>';
 
-  // Loop over each driver and create a list item
   drivers.forEach(driver => {
     // Jolpica uses givenName/familyName instead of name/surname
     html += `
@@ -106,14 +124,19 @@ function renderDrivers(drivers) {
 
   html += '</ul>';
 
-  // Put the HTML into the drivers section
-  driversSection.innerHTML = html;
+  // Only update the list div, not the whole section
+  driversList.innerHTML = html;
 };
 
 
 
 // Section where we'll render the teams
 const teamsSection = document.getElementById('tab-teams');
+// The div inside the section where the list goes
+const teamsList = document.getElementById('teams-list');
+
+// Store the fetched teams so we can re-sort without fetching again
+let allTeams = [];
 
 // Fetch all teams from current season
 async function loadConstructors() {
@@ -125,19 +148,33 @@ async function loadConstructors() {
     const data = await response.json();
 
     // Jolpica uses ConstructorTable.Constructors (not TeamsTable.Teams)
-    const teams = data.MRData.ConstructorTable.Constructors;
+    allTeams = data.MRData.ConstructorTable.Constructors;
 
-    renderTeams(teams);
+    renderTeams(allTeams);
   } catch (error) {
     teamsSection.innerHTML = '<h2>Teams</h2><p>Failed to load teams. Please try again.</p>';
     console.error('Error fetching teams:', error);
   }
 }
 
+// Sort teams when dropdown changes
+document.getElementById('teams-sort').addEventListener('change', (e) => {
+  const value = e.target.value;
+
+  // Use a ternary to decide sort direction
+  const sorted = allTeams.slice().sort((a, b) =>
+    value === 'az'
+      ? a.name.localeCompare(b.name)
+      : b.name.localeCompare(a.name)
+  );
+
+  // Only re-render if a real option was chosen
+  if (value !== 'default') renderTeams(sorted);
+});
+
 // Build the HTML for the teams list and put it on the page
 function renderTeams(teams) {
-  // Start with the section title
-  let html = '<h2>Teams</h2><ul>';
+  let html = '<ul>';
 
   // Loop over each team and create a list item
   teams.forEach(team => {
@@ -152,8 +189,8 @@ function renderTeams(teams) {
 
   html += '</ul>';
 
-  // Put the HTML into the teams section
-  teamsSection.innerHTML = html;
+  // Only update the list div, not the whole section
+  teamsList.innerHTML = html;
 }
 
 // ─── Circuits API ───────────────────────────────────────────
