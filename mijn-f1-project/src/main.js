@@ -173,6 +173,45 @@ function renderCircuits(circuits) {
   circuitsSection.innerHTML = html;
 }
 
+// ─── Calendar API ───────────────────────────────────────────
+
+// The section where we'll render the calendar
+const calendarSection = document.getElementById('tab-calendar');
+
+// Fetch all races from the current season
+async function loadCalendar() {
+  try {
+    const response = await fetch('https://api.jolpi.ca/ergast/f1/2026/races/');
+    const data = await response.json();
+
+    // Races are stored under RaceTable.Races
+    const races = data.MRData.RaceTable.Races;
+
+    renderCalendar(races);
+  } catch (error) {
+    calendarSection.innerHTML = '<h2>Calendar</h2><p>Failed to load calendar. Please try again.</p>';
+    console.error('Error fetching calendar:', error);
+  }
+}
+
+// Build the HTML for the calendar
+function renderCalendar(races) {
+  let html = '<h2>Calendar</h2><ol>';
+
+  races.forEach(race => {
+    // Each race has a round, raceName, date and Circuit object
+    html += `
+      <li>
+        <strong>Round ${race.round} — ${race.raceName}</strong><br>
+        ${race.Circuit.circuitName}, ${race.Circuit.Location.locality} (${race.date})
+      </li>
+    `;
+  });
+
+  html += '</ol>';
+  calendarSection.innerHTML = html;
+}
+
 // ─── Standings API ───────────────────────────────────────────
 
 // The two divs inside the standings section
@@ -251,6 +290,7 @@ function renderConstructorStandings(standings) {
 loadDrivers();
 loadConstructors();
 loadCircuits();
+loadCalendar();
 loadDriverStandings();
 loadConstructorStandings();
 
