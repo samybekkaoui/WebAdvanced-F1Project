@@ -1,13 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mijn-f1-project</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APEX — F1 Data Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand">
+        <div class="brand__mark"></div>
+        <div>
+          <div class="brand__name">PIT<b>WALL</b></div>
+          <div class="brand__tag">F1 Data Hub</div>
+        </div>
+      </div>
+      <div class="topbar__spacer"></div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <div class="tabs__inner">
+      <button class="tab" aria-selected="true">Home</button>
+      <button class="tab" aria-selected="false">Standings</button>
+      <button class="tab" aria-selected="false">Drivers</button>
+      <button class="tab" aria-selected="false">Teams</button>
+      <button class="tab" aria-selected="false">Calendar</button>
+      <button class="tab" aria-selected="false">Circuits</button>
+      <button class="tab" aria-selected="false">Results</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="wrap">
+      <p>Create different tabs per category</p>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="foot__inner">
+      <div class="foot__t">
+        <b>PITWALL · F1 Data Hub</b><br/>
+        <p>Web Advanced Y1 - Samy Bekkaoui</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
 </html>
