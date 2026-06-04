@@ -196,6 +196,29 @@ document.getElementById('teams-sort').addEventListener('change', (e) => {
   if (value !== 'default') renderTeams(sorted);
 });
 
+// Search teams as the user types
+const teamsSearchInput = document.getElementById('teams-search');
+const teamsSearchError = document.getElementById('teams-search-error');
+
+teamsSearchInput.addEventListener('input', (e) => {
+  const query = e.target.value;
+
+  // Formulier validatie: toon foutmelding bij 1 karakter
+  if (query.length === 1) {
+    teamsSearchError.style.display = 'block';
+    return;
+  } else {
+    teamsSearchError.style.display = 'none';
+  }
+
+  // Filter the teams array based on the search query
+  const filtered = allTeams.filter(team =>
+    team.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  renderTeams(filtered);
+});
+
 // Build the HTML for the teams list and put it on the page
 function renderTeams(teams) {
   let html = '<ul>';
