@@ -68,12 +68,16 @@
 
       <section id="tab-drivers" hidden>
         <h2>Drivers</h2>
-        <!-- Sort dropdown -->
-        <select id="drivers-sort">
-          <option value="default">Sort by...</option>
-          <option value="az">Name A → Z</option>
-          <option value="za">Name Z → A</option>
-        </select>
+        <!-- Search input + sort dropdown -->
+        <div>
+          <input id="drivers-search" type="text" placeholder="Search drivers...">
+          <p id="drivers-search-error" style="color: red; display: none;">Please enter at least 2 characters.</p>
+          <select id="drivers-sort">
+            <option value="default">Sort by...</option>
+            <option value="az">Name A → Z</option>
+            <option value="za">Name Z → A</option>
+          </select>
+        </div>
         <!-- Drivers list gets rendered here by JS -->
         <div id="drivers-list"></div>
       </section>

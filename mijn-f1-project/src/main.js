@@ -108,6 +108,30 @@ document.getElementById('drivers-sort').addEventListener('change', (e) => {
   if (value !== 'default') renderDrivers(sorted);
 });
 
+// Search drivers as the user types
+const driversSearchInput = document.getElementById('drivers-search');
+const driversSearchError = document.getElementById('drivers-search-error');
+
+driversSearchInput.addEventListener('input', (e) => {
+  const query = e.target.value;
+
+  // Formulier validatie: toon foutmelding bij 1 karakter
+  if (query.length === 1) {
+    driversSearchError.style.display = 'block';
+    return; // stop here, don't filter yet
+  } else {
+    driversSearchError.style.display = 'none';
+  }
+
+  // Filter the drivers array based on the search query
+  const filtered = allDrivers.filter(driver => {
+    const fullName = driver.givenName + ' ' + driver.familyName;
+    return fullName.toLowerCase().includes(query.toLowerCase());
+  });
+
+  renderDrivers(filtered);
+});
+
 // Build the HTML for the drivers list and put it on the page
 function renderDrivers(drivers) {
   let html = '<ul>';
