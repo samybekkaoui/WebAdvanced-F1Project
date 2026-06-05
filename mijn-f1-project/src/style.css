@@ -79,7 +79,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-bottom-color: var(--accent);
 }
 
-/* Dark mode — applied to the body when the user switches */
+/* Dark mode */
 body.dark {
   --bg: #1a1a1a;
   --paper: #242424;
@@ -136,6 +136,8 @@ body.dark {
   color: var(--ink-3);
   cursor: pointer;
 }
+
+/* Footer */
 .foot {
   border-top: 1px solid var(--line);
   background: var(--paper);
@@ -145,7 +147,7 @@ body.dark {
   text-align: center;
 }
 
-/* Section subtitle — used under headings */
+/* Section subtitle */
 .section-sub {
   color: var(--ink-3);
   font-size: 14px;
@@ -155,14 +157,12 @@ body.dark {
 
 /* ─── Standings table ──────────────────────────────────────── */
 
-/* Wrapper to put the two tables side by side */
 .standings-wrap {
   display: flex;
   gap: 40px;
   align-items: flex-start;
 }
 
-/* Each standings table */
 .standings-table {
   width: 100%;
   border-collapse: collapse;
@@ -172,7 +172,6 @@ body.dark {
   overflow: hidden;
 }
 
-/* Header row */
 .standings-table thead th {
   text-align: left;
   font-size: 11px;
@@ -184,48 +183,22 @@ body.dark {
   font-weight: 600;
 }
 
-/* Body rows */
 .standings-table tbody td {
   padding: 12px 16px;
   border-bottom: 1px solid var(--line);
   font-size: 14px;
 }
 
-/* Remove border from last row */
-.standings-table tbody tr:last-child td {
-  border-bottom: none;
-}
+.standings-table tbody tr:last-child td { border-bottom: none; }
+.standings-table tbody tr:hover { background: var(--bg); }
 
-/* Hover effect */
-.standings-table tbody tr:hover {
-  background: var(--bg);
-}
+.standings-table__pos { font-weight: 800; color: var(--ink-3); width: 40px; }
+.standings-table__pts { font-weight: 700; text-align: right; }
+.standings-table__muted { color: var(--ink-3); font-size: 13px; }
+.standings-table__row--first .standings-table__pos { color: var(--accent); }
 
-/* Position number — slightly muted */
-.standings-table__pos {
-  font-weight: 800;
-  color: var(--ink-3);
-  width: 40px;
-}
+/* ─── Cards ──────────────────────────────────────────────── */
 
-/* Points column — right aligned */
-.standings-table__pts {
-  font-weight: 700;
-  text-align: right;
-}
-
-/* Team name in driver standings — muted */
-.standings-table__muted {
-  color: var(--ink-3);
-  font-size: 13px;
-}
-
-/* P1 row gets accent color on the position */
-.standings-table__row--first .standings-table__pos {
-  color: var(--accent);
-}
-
-/* Grid that holds the cards */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -233,7 +206,6 @@ body.dark {
   margin-top: 16px;
 }
 
-/* Individual card */
 .card {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -245,34 +217,15 @@ body.dark {
   transition: transform .16s, border-color .16s;
 }
 
-/* Slight lift on hover */
 .card:hover {
   transform: translateY(-3px);
   border-color: var(--accent);
 }
 
-/* Big faded number (driver number) */
-.card__number {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--line);
-  text-align: right;
-}
+.card__number { font-size: 28px; font-weight: 800; color: var(--line); text-align: right; }
+.card__name { font-size: 17px; font-weight: 700; line-height: 1.1; }
+.card__meta { font-size: 13px; color: var(--ink-3); }
 
-/* Name */
-.card__name {
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.1;
-}
-
-/* Smaller info below the name */
-.card__meta {
-  font-size: 13px;
-  color: var(--ink-3);
-}
-
-/* Bottom stats row */
 .card__stats {
   display: flex;
   gap: 16px;
@@ -281,23 +234,11 @@ body.dark {
   margin-top: auto;
 }
 
-/* Stat label */
-.card__stats .k {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-3);
-}
+.card__stats .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); }
+.card__stats .v { font-size: 15px; font-weight: 700; }
 
-/* Stat value */
-.card__stats .v {
-  font-size: 15px;
-  font-weight: 700;
-}
+/* ─── Star / favourite button ──────────────────────────── */
 
-/* ─── Star / favourite button ────────────────────────────── */
-
-/* Default star: grey */
 .star-btn {
   font-size: 20px;
   color: var(--line);
@@ -309,19 +250,11 @@ body.dark {
   transition: color .15s, transform .15s;
 }
 
-.star-btn:hover {
-  color: gold;
-  transform: scale(1.2);
-}
-
-/* Active star: gold */
-.star-btn--active {
-  color: gold;
-}
+.star-btn:hover { color: gold; transform: scale(1.2); }
+.star-btn--active { color: gold; }
 
 /* ─── Calendar ────────────────────────────────────────── */
 
-/* Container card for the whole list */
 .cal-list {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -330,7 +263,6 @@ body.dark {
   margin-top: 16px;
 }
 
-/* Each race row: round number | name + location | date */
 .calrow {
   display: grid;
   grid-template-columns: 50px 1fr auto;
@@ -341,50 +273,18 @@ body.dark {
   transition: background .12s;
 }
 
-/* No border on the last row */
 .calrow:last-child { border-bottom: none; }
-
-/* Hover effect */
 .calrow:hover { background: var(--bg); }
-
-/* Past races are slightly muted */
 .calrow--past { opacity: 0.5; }
 
-/* Round number — big and grey */
-.calrnd {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--line);
-  text-align: center;
-}
-
-/* Highlight round number on hover */
+.calrnd { font-size: 22px; font-weight: 800; color: var(--line); text-align: center; }
 .calrow:hover .calrnd { color: var(--accent); }
+.calname { font-size: 15px; font-weight: 700; }
+.calloc { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+.caldate { font-size: 13px; color: var(--ink-2); text-align: right; white-space: nowrap; }
 
-/* Race name */
-.calname {
-  font-size: 15px;
-  font-weight: 700;
-}
+/* ─── Circuit cards ──────────────────────────────────── */
 
-/* Circuit + country below the name */
-.calloc {
-  font-size: 13px;
-  color: var(--ink-3);
-  margin-top: 2px;
-}
-
-/* Date on the right */
-.caldate {
-  font-size: 13px;
-  color: var(--ink-2);
-  text-align: right;
-  white-space: nowrap;
-} 
-
-/* ─── Circuit cards ──────────────────────────────────────── */
-
-/* Image area at the top of the card */
 .circuit-card__map {
   background: var(--bg);
   border-radius: 6px;
@@ -396,7 +296,6 @@ body.dark {
   margin-bottom: 8px;
 }
 
-/* The SVG image itself */
 .circuit-card__map img {
   width: 100%;
   height: 100%;
@@ -404,20 +303,34 @@ body.dark {
   padding: 12px;
 }
 
-/* Invert track color in dark mode so it stays visible */
-body.dark .circuit-card__map img {
-  filter: invert(1);
+body.dark .circuit-card__map img { filter: invert(1); }
+
+.circuit-card__no-img { font-size: 12px; color: var(--ink-3); }
+
+/* ─── Scroll to top button ──────────────────────────── */
+
+/* Fixed in bottom right, only shown on mobile via JS */
+#scroll-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-size: 22px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 100;
 }
 
-/* Fallback text when no image is found */
-.circuit-card__no-img {
-  font-size: 12px;
-  color: var(--ink-3);
-}
+#scroll-top:hover { background: var(--ink); }
 
 /* ─── Responsive ──────────────────────────────────────── */
 
-/* Tablet: 2 columns for cards, standings stack */
+/* Tablet */
 @media (max-width: 860px) {
   .cards-grid { grid-template-columns: repeat(2, 1fr); }
   .standings-wrap { flex-direction: column; gap: 24px; }
@@ -438,7 +351,7 @@ body.dark .circuit-card__map img {
 
 /* ─── Hamburger button ───────────────────────────────── */
 
-/* Hamburger button - hidden by default, JS shows it on mobile */
+/* JS controls display, this just styles it */
 .hamburger {
   flex-direction: column;
   gap: 5px;
@@ -461,8 +374,6 @@ body.dark .circuit-card__map img {
 
 /* ─── Mobile menu ───────────────────────────────────── */
 
-/* Hidden by default via the hidden attribute in HTML */
-/* When shown, display as a column of buttons */
 .mobile-menu:not([hidden]) {
   display: flex;
   flex-direction: column;
@@ -472,7 +383,6 @@ body.dark .circuit-card__map img {
   gap: 4px;
 }
 
-/* Each button in the mobile menu */
 .mobile-menu .tab {
   text-align: left;
   padding: 12px 16px;
@@ -483,10 +393,7 @@ body.dark .circuit-card__map img {
   color: var(--ink);
 }
 
-/* Active tab in mobile menu */
 .mobile-menu .tab[aria-selected="true"] {
   background: var(--accent);
   color: var(--accent-ink);
 }
-
-

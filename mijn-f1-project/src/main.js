@@ -1,6 +1,32 @@
 // main.js — tab navigation + drivers API
 console.log('Pitwall F1 Hub loaded');
 
+// ─── Scroll to top button (Observer API) ─────────────────────
+
+const scrollTopBtn = document.getElementById('scroll-top');
+
+// Create an invisible anchor at the top of the page
+// The observer watches this — when it leaves the viewport, show the button
+const topAnchor = document.createElement('div');
+topAnchor.id = 'top-anchor';
+document.body.prepend(topAnchor);
+
+// IntersectionObserver fires whenever the anchor enters or leaves the viewport
+const scrollObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    // Show button when anchor is out of view (user has scrolled down)
+    // Hide it when anchor is back in view (user is at the top)
+    scrollTopBtn.hidden = entry.isIntersecting;
+  });
+});
+
+scrollObserver.observe(topAnchor);
+
+// Smooth scroll back to top when button is clicked
+scrollTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 // ─── Dark mode ───────────────────────────────────────────
 
 const themeToggle = document.getElementById('toggle');
