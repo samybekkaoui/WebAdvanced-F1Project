@@ -134,21 +134,29 @@ driversSearchInput.addEventListener('input', (e) => {
 
 // Build the HTML for the drivers list and put it on the page
 function renderDrivers(drivers) {
-  let html = '<ul>';
+  let html = '<div class="cards-grid">';
 
   drivers.forEach(driver => {
-    // Jolpica uses givenName/familyName instead of name/surname
     html += `
-      <li>
-        <strong>${driver.givenName} ${driver.familyName}</strong>
-        (#${driver.permanentNumber || '?'} · ${driver.code || '?'} · ${driver.nationality})
-      </li>
+      <div class="card">
+        <div class="card__number">${driver.permanentNumber || '?'}</div>
+        <div class="card__name">${driver.givenName} ${driver.familyName}</div>
+        <div class="card__meta">${driver.nationality}</div>
+        <div class="card__stats">
+          <div>
+            <div class="k">Code</div>
+            <div class="v">${driver.code || '?'}</div>
+          </div>
+          <div>
+            <div class="k">Born</div>
+            <div class="v">${driver.dateOfBirth || '?'}</div>
+          </div>
+        </div>
+      </div>
     `;
   });
 
-  html += '</ul>';
-
-  // Only update the list div, not the whole section
+  html += '</div>';
   driversList.innerHTML = html;
 };
 
@@ -221,22 +229,24 @@ teamsSearchInput.addEventListener('input', (e) => {
 
 // Build the HTML for the teams list and put it on the page
 function renderTeams(teams) {
-  let html = '<ul>';
+  let html = '<div class="cards-grid">';
 
-  // Loop over each team and create a list item
+  // Loop over each team and create a card
   teams.forEach(team => {
-    // Jolpica uses name and nationality for constructors
     html += `
-      <li>
-        <strong>${team.name}</strong>
-        (${team.nationality})
-      </li>
+      <div class="card">
+        <div class="card__name">${team.name}</div>
+        <div class="card__stats">
+          <div>
+            <div class="k">Nationality</div>
+            <div class="v">${team.nationality}</div>
+          </div>
+        </div>
+      </div>
     `;
   });
 
-  html += '</ul>';
-
-  // Only update the list div, not the whole section
+  html += '</div>';
   teamsList.innerHTML = html;
 }
 

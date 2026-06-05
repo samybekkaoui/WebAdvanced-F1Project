@@ -145,4 +145,76 @@ body.dark {
   text-align: center;
 }
 
+/* ─── Cards ─────────────────────────────────────────────────── */
+
+/* Grid that holds the cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+
+/* Individual card */
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform .16s, border-color .16s;
+}
+
+/* Slight lift on hover */
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+
+/* Big faded number (driver number) */
+.card__number {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--line);
+  text-align: right;
+}
+
+/* Name */
+.card__name {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* Smaller info below the name */
+.card__meta {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+/* Bottom stats row */
+.card__stats {
+  display: flex;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  margin-top: auto;
+}
+
+/* Stat label */
+.card__stats .k {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+
+/* Stat value */
+.card__stats .v {
+  font-size: 15px;
+  font-weight: 700;
+}
+
 
