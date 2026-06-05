@@ -415,4 +415,78 @@ body.dark .circuit-card__map img {
   color: var(--ink-3);
 }
 
+/* ─── Responsive ──────────────────────────────────────── */
+
+/* Tablet: 2 columns for cards, standings stack */
+@media (max-width: 860px) {
+  .cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .standings-wrap { flex-direction: column; gap: 24px; }
+  .wrap { padding: 24px 16px; }
+}
+
+/* Mobile */
+@media (max-width: 540px) {
+  .cards-grid { grid-template-columns: 1fr; }
+  .topbar__inner { height: 52px; padding: 0 16px; }
+  .toggle-label { display: none; }
+  .brand__tag { display: none; }
+  .wrap { padding: 16px 12px; }
+  .caldate { display: none; }
+  .calrow { grid-template-columns: 40px 1fr; padding: 12px 16px; }
+  h2 { font-size: 22px; }
+}
+
+/* ─── Hamburger button ───────────────────────────────── */
+
+/* Hamburger button - hidden by default, JS shows it on mobile */
+.hamburger {
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px;
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+}
+
+.hamburger:hover span { background: var(--accent); }
+
+/* ─── Mobile menu ───────────────────────────────────── */
+
+/* Hidden by default via the hidden attribute in HTML */
+/* When shown, display as a column of buttons */
+.mobile-menu:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  padding: 8px 12px;
+  gap: 4px;
+}
+
+/* Each button in the mobile menu */
+.mobile-menu .tab {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 15px;
+  border-radius: 8px;
+  border-bottom: none;
+  width: 100%;
+  color: var(--ink);
+}
+
+/* Active tab in mobile menu */
+.mobile-menu .tab[aria-selected="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
 

@@ -26,26 +26,70 @@ themeToggle.addEventListener('change', () => {
   }
 });
 
+// ─── Hamburger menu ───────────────────────────────────────────
+
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+const desktopTabs = document.querySelector('.tabs');
+
+// Show or hide hamburger based on screen width
+function updateNav() {
+  if (window.innerWidth <= 540) {
+    // Mobile: show hamburger, hide desktop tabs
+    hamburger.style.display = 'flex';
+    desktopTabs.style.display = 'none';
+  } else {
+    // Desktop: hide hamburger and mobile menu, show desktop tabs
+    hamburger.style.display = 'none';
+    mobileMenu.setAttribute('hidden', '');
+    desktopTabs.style.display = 'block';
+  }
+}
+
+// Run on load and whenever the window is resized
+updateNav();
+window.addEventListener('resize', updateNav);
+
+// Toggle the mobile menu open/closed
+hamburger.addEventListener('click', () => {
+  if (mobileMenu.hasAttribute('hidden')) {
+    mobileMenu.removeAttribute('hidden');
+  } else {
+    mobileMenu.setAttribute('hidden', '');
+  }
+});
+
+// Close the menu when a tab is clicked inside it
+mobileMenu.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    mobileMenu.setAttribute('hidden', '');
+  });
+});
+
 // ─── Tab switching ───────────────────────────────────────────
 
-// Grab all tab buttons from the nav
-const tabButtons = document.querySelectorAll('.tab');
+// Grab all tab buttons from the nav ONLY (not the mobile menu)
+const tabButtons = document.querySelectorAll('.tabs .tab');
 
 // Grab all content sections
 const tabSections = document.querySelectorAll('main section');
 
+// Also grab the mobile menu buttons separately
+const mobileTabButtons = document.querySelectorAll('.mobile-menu .tab');
+
 // This function switches the active tab
 function switchTab(tabName) {
-  // Loop over all buttons and update which one looks active
+  // Update desktop tab buttons
   tabButtons.forEach(btn => {
-    if (btn.dataset.tab === tabName) {
-      btn.setAttribute('aria-selected', 'true');
-    } else {
-      btn.setAttribute('aria-selected', 'false');
-    }
+    btn.setAttribute('aria-selected', btn.dataset.tab === tabName ? 'true' : 'false');
   });
 
-  // Loop over all sections and show only the matching one
+  // Update mobile menu buttons too
+  mobileTabButtons.forEach(btn => {
+    btn.setAttribute('aria-selected', btn.dataset.tab === tabName ? 'true' : 'false');
+  });
+
+  // Show only the matching section
   tabSections.forEach(section => {
     if (section.id === 'tab-' + tabName) {
       section.removeAttribute('hidden');
@@ -53,10 +97,20 @@ function switchTab(tabName) {
       section.setAttribute('hidden', '');
     }
   });
+
+  // Close the mobile menu after switching
+  mobileMenu.setAttribute('hidden', '');
 }
 
-// Add a click listener to each tab button
+// Add click listeners to desktop tab buttons
 tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    switchTab(btn.dataset.tab);
+  });
+});
+
+// Add click listeners to mobile menu buttons
+mobileTabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     switchTab(btn.dataset.tab);
   });

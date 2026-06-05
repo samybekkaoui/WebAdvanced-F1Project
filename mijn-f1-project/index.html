@@ -26,6 +26,22 @@
         <input id="toggle" class="toggle" type="checkbox">
         <label for="toggle" class="toggle-label">Dark mode</label>
       </div>
+      <!-- Hamburger button - only visible on mobile -->
+      <button id="hamburger" class="hamburger" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile menu - hidden by default, shown when hamburger is clicked -->
+    <div id="mobile-menu" class="mobile-menu" hidden>
+      <button class="tab" data-tab="home">Home</button>
+      <button class="tab" data-tab="standings">Standings</button>
+      <button class="tab" data-tab="drivers">Drivers</button>
+      <button class="tab" data-tab="teams">Teams</button>
+      <button class="tab" data-tab="calendar">Calendar</button>
+      <button class="tab" data-tab="circuits">Circuits</button>
     </div>
   </header>
 
