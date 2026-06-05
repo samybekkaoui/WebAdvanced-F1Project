@@ -277,12 +277,44 @@ function renderTeams(teams) {
 // The section where we'll render the circuits
 const circuitsSection = document.getElementById('tab-circuits');
 
+// Mapping from Jolpica circuitId to the SVG filename in the GitHub repo
+// Source: https://github.com/julesr0y/f1-circuits-svg
+// Note: some circuits have different names in the repo than in Jolpica
+const circuitSvgMap = {
+  'albert_park':    'melbourne-1',       // Albert Park = Melbourne
+  'bahrain':        'bahrain-1',
+  'baku':           'baku-1',
+  'catalunya':      'catalunya-1',       // Barcelona = Catalunya
+  'americas':       'austin-1',
+  'hungaroring':    'hungaroring-1',
+  'interlagos':     'interlagos-1',
+  'jeddah':         'jeddah-1',
+  'losail':         'lusail-1',          // Losail = Lusail (different spelling)
+  'marina_bay':     'marina-bay-1',      // Marina Bay Street Circuit
+  'madring':        'madring-1',         // Madrid Street Circuit
+  'miami':          'miami-1',
+  'monaco':         'monaco-1',
+  'monza':          'monza-1',
+  'montreal':       'montreal-1',
+  'red_bull_ring':  'spielberg-1',       // Red Bull Ring = Spielberg
+  'rodriguez':      'mexico-city-1',     // Hermanos Rodriguez = Mexico City
+  'shanghai':       'shanghai-1',
+  'silverstone':    'silverstone-1',
+  'spa':            'spa-francorchamps-1',
+  'suzuka':         'suzuka-1',
+  'vegas':          'las-vegas-1',
+  'villeneuve':     'montreal-1',        // Gilles Villeneuve = Montreal
+  'yas_marina':     'yas-marina-1',
+  'zandvoort':      'zandvoort-1',
+};
+
+// Base URL pointing to the minimal/black-outline folder in the repo
+const SVG_BASE = 'https://raw.githubusercontent.com/julesr0y/f1-circuits-svg/main/circuits/minimal/black-outline/';
+
 // Fetch all circuits from the current season
 async function loadCircuits() {
   try {
-    // Call the API - circuits from 2026 season
     const response = await fetch('https://api.jolpi.ca/ergast/f1/2026/circuits/');
-
     const data = await response.json();
 
     // Jolpica stores circuits under CircuitTable.Circuits
@@ -295,22 +327,32 @@ async function loadCircuits() {
   }
 }
 
-// Build the HTML for the circuits list and put it on the page
+// Build the HTML for the circuits as cards with SVG track images
 function renderCircuits(circuits) {
-  let html = '<h2>Circuits</h2><ul>';
+  let html = '<div class="cards-grid">';
 
   circuits.forEach(circuit => {
-    // Each circuit has a name, location and country
+    // Look up the SVG filename for this circuit
+    const svgName = circuitSvgMap[circuit.circuitId];
+    const svgUrl = svgName ? `${SVG_BASE}${svgName}.svg` : null;
+
     html += `
-      <li>
-        <strong>${circuit.circuitName}</strong>
-        (${circuit.Location.locality}, ${circuit.Location.country})
-      </li>
+      <div class="card circuit-card">
+        <!-- SVG track image, or a placeholder if not found -->
+        <div class="circuit-card__map">
+          ${
+            svgUrl
+              ? `<img src="${svgUrl}" alt="${circuit.circuitName} track layout">`
+              : `<span class="circuit-card__no-img">No image</span>`
+          }
+        </div>
+        <div class="card__name">${circuit.circuitName}</div>
+        <div class="card__meta">${circuit.Location.locality}, ${circuit.Location.country}</div>
+      </div>
     `;
   });
 
-  html += '</ul>';
-
+  html += '</div>';
   circuitsSection.innerHTML = html;
 }
 
@@ -359,19 +401,36 @@ document.getElementById('calendar-filter').addEventListener('change', (e) => {
 
 // Build the HTML for the calendar
 function renderCalendar(races) {
-  let html = '<ol>';
+  // Wrap everything in a card-like container
+  let html = '<div class="cal-list">';
 
   races.forEach(race => {
-    // Each race has a round, raceName, date and Circuit object
+    const raceDate = new Date(race.date);
+    const isPast = raceDate < today;
+
+    // Format the date nicely: "15 Mar 2026"
+    const formattedDate = raceDate.toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'short', year: 'numeric'
+    });
+
     html += `
-      <li>
-        <strong>Round ${race.round} — ${race.raceName}</strong><br>
-        ${race.Circuit.circuitName}, ${race.Circuit.Location.locality} (${race.date})
-      </li>
+      <div class="calrow ${isPast ? 'calrow--past' : ''}">
+        <!-- Round number on the left -->
+        <div class="calrnd">${race.round}</div>
+
+        <!-- Race name and location in the middle -->
+        <div>
+          <div class="calname">${race.raceName}</div>
+          <div class="calloc">${race.Circuit.circuitName}, ${race.Circuit.Location.country}</div>
+        </div>
+
+        <!-- Date on the right -->
+        <div class="caldate">${formattedDate}</div>
+      </div>
     `;
   });
 
-  html += '</ol>';
+  html += '</div>';
   calendarList.innerHTML = html;
 }
 
@@ -403,19 +462,34 @@ async function loadDriverStandings() {
 
 // Build the HTML for driver standings
 function renderDriverStandings(standings) {
-  let html = '<h3>Drivers</h3><ol>';
+  let html = `
+    <h3>Drivers</h3>
+    <table class="standings-table">
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Driver</th>
+          <th>Team</th>
+          <th>Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
 
   standings.forEach(entry => {
-    // Each entry has a position, Driver object and points
+    // Highlight P1 with accent color via a class
+    const isFirst = entry.position === '1';
     html += `
-      <li>
-        <strong>${entry.Driver.givenName} ${entry.Driver.familyName}</strong>
-        — ${entry.points} pts
-      </li>
+      <tr class="${isFirst ? 'standings-table__row--first' : ''}">
+        <td class="standings-table__pos">${entry.position}</td>
+        <td><strong>${entry.Driver.givenName} ${entry.Driver.familyName}</strong></td>
+        <td class="standings-table__muted">${entry.Constructors[0].name}</td>
+        <td class="standings-table__pts">${entry.points}</td>
+      </tr>
     `;
   });
 
-  html += '</ol>';
+  html += '</tbody></table>';
   driverStandingsDiv.innerHTML = html;
 }
 
@@ -441,19 +515,32 @@ async function loadConstructorStandings() {
 
 // Build the HTML for constructor standings
 function renderConstructorStandings(standings) {
-  let html = '<h3>Constructors</h3><ol>';
+  let html = `
+    <h3>Constructors</h3>
+    <table class="standings-table">
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Team</th>
+          <th>Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
 
   standings.forEach(entry => {
-    // Each entry has a Constructor object and points
+    // Highlight P1 with accent color
+    const isFirst = entry.position === '1';
     html += `
-      <li>
-        <strong>${entry.Constructor.name}</strong>
-        — ${entry.points} pts
-      </li>
+      <tr class="${isFirst ? 'standings-table__row--first' : ''}">
+        <td class="standings-table__pos">${entry.position}</td>
+        <td><strong>${entry.Constructor.name}</strong></td>
+        <td class="standings-table__pts">${entry.points}</td>
+      </tr>
     `;
   });
 
-  html += '</ol>';
+  html += '</tbody></table>';
   constructorStandingsDiv.innerHTML = html;
 }
 
