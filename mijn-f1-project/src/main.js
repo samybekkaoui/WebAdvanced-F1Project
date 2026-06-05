@@ -200,6 +200,209 @@ document.addEventListener('click', (e) => {
   if (btn.dataset.circuit) toggleFavCircuit(btn.dataset.circuit);
 });
 
+// ─── Team modal ───────────────────────────────────────────
+
+const teamModal = document.getElementById('team-modal');
+const teamModalClose = document.getElementById('team-modal-close');
+let currentModalTeam = null;
+
+async function openTeamModal(team) {
+  currentModalTeam = team;
+
+  // Look up standings data for this team
+  const standing = allConstructorStandings.find(s => s.Constructor.constructorId === team.constructorId);
+  const position = standing ? standing.position : '?';
+  const points = standing ? standing.points : '?';
+
+  const isFav = favouriteTeams.includes(team.constructorId);
+
+  // Fill in the modal fields
+  document.getElementById('modal-team-name').textContent = team.name;
+  document.getElementById('modal-team-desc').textContent = team.nationality;
+  document.getElementById('modal-team-nationality').textContent = team.nationality;
+  document.getElementById('modal-team-pos').textContent = `#${position}`;
+  document.getElementById('modal-team-pts').textContent = points;
+  document.getElementById('modal-team-wiki').href = team.url;
+
+  // Update star
+  const starBtn = document.getElementById('modal-team-star');
+  starBtn.classList.toggle('star-btn--active', isFav);
+  starBtn.dataset.team = team.constructorId;
+
+  // Reset photo and extract
+  document.getElementById('modal-team-photo').hidden = true;
+  document.getElementById('modal-team-extract').textContent = 'Loading...';
+
+  // Show the modal
+  teamModal.removeAttribute('hidden');
+
+  // Fetch Wikipedia data
+  try {
+    const pageName = team.url.split('/wiki/')[1];
+    const wikiResponse = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${pageName}`);
+    const wikiData = await wikiResponse.json();
+
+    document.getElementById('modal-team-extract').textContent = wikiData.extract || '';
+
+    // Show photo if available
+    const photo = document.getElementById('modal-team-photo');
+    if (wikiData.thumbnail) {
+      photo.src = wikiData.thumbnail.source;
+      photo.alt = team.name;
+      photo.hidden = false;
+    }
+  } catch (error) {
+    document.getElementById('modal-team-extract').textContent = '';
+    console.error('Wikipedia fetch failed:', error);
+  }
+}
+
+// Close team modal
+teamModalClose.addEventListener('click', () => {
+  teamModal.setAttribute('hidden', '');
+});
+
+// Handle star in team modal
+document.getElementById('modal-team-star').addEventListener('click', () => {
+  if (!currentModalTeam) return;
+  toggleFavTeam(currentModalTeam.constructorId);
+  const isFav = favouriteTeams.includes(currentModalTeam.constructorId);
+  document.getElementById('modal-team-star').classList.toggle('star-btn--active', isFav);
+});
+
+// ─── Circuit modal ───────────────────────────────────────────
+
+const circuitModal = document.getElementById('circuit-modal');
+const circuitModalClose = document.getElementById('circuit-modal-close');
+let currentModalCircuit = null;
+
+function openCircuitModal(circuit) {
+  currentModalCircuit = circuit;
+
+  const isFav = favouriteCircuits.includes(circuit.circuitId);
+
+  // Fill in the modal fields
+  document.getElementById('modal-circuit-name').textContent = circuit.circuitName;
+  document.getElementById('modal-circuit-desc').textContent = `${circuit.Location.locality}, ${circuit.Location.country}`;
+  document.getElementById('modal-circuit-city').textContent = circuit.Location.locality;
+  document.getElementById('modal-circuit-country').textContent = circuit.Location.country;
+  document.getElementById('modal-circuit-lat').textContent = circuit.Location.lat;
+  document.getElementById('modal-circuit-lng').textContent = circuit.Location.long;
+  document.getElementById('modal-circuit-wiki').href = circuit.url;
+
+  // Google Maps link using the coordinates
+  const mapsUrl = `https://www.google.com/maps?q=${circuit.Location.lat},${circuit.Location.long}`;
+  document.getElementById('modal-circuit-maps').href = mapsUrl;
+
+  // Update star
+  const starBtn = document.getElementById('modal-circuit-star');
+  starBtn.classList.toggle('star-btn--active', isFav);
+  starBtn.dataset.circuit = circuit.circuitId;
+
+  // Show the modal
+  circuitModal.removeAttribute('hidden');
+}
+
+// Close circuit modal
+circuitModalClose.addEventListener('click', () => {
+  circuitModal.setAttribute('hidden', '');
+});
+
+// Handle star in circuit modal
+document.getElementById('modal-circuit-star').addEventListener('click', () => {
+  if (!currentModalCircuit) return;
+  toggleFavCircuit(currentModalCircuit.circuitId);
+  const isFav = favouriteCircuits.includes(currentModalCircuit.circuitId);
+  document.getElementById('modal-circuit-star').classList.toggle('star-btn--active', isFav);
+});
+
+// ─── Driver modal ───────────────────────────────────────────
+
+// Grab all modal elements
+const driverModal = document.getElementById('driver-modal');
+const driverModalClose = document.getElementById('driver-modal-close');
+
+// Keep track of which driver is currently open in the modal
+let currentModalDriver = null;
+
+// Open the modal and fill it with driver data
+async function openDriverModal(driver) {
+  currentModalDriver = driver;
+
+  // Look up standings data for this driver
+  const standing = allDriverStandings.find(s => s.Driver.driverId === driver.driverId);
+  const position = standing ? standing.position : '?';
+  const points = standing ? standing.points : '?';
+  const team = standing ? standing.Constructors[0].name : '?';
+
+  // Check if this driver is a favourite
+  const isFav = favouriteDrivers.includes(driver.driverId);
+
+  // Fill in the modal fields
+  document.getElementById('modal-driver-name').textContent = `${driver.givenName} ${driver.familyName}`;
+  document.getElementById('modal-driver-desc').textContent = driver.nationality;
+  document.getElementById('modal-driver-nationality').textContent = driver.nationality;
+  document.getElementById('modal-driver-dob').textContent = driver.dateOfBirth || '?';
+  document.getElementById('modal-driver-number').textContent = driver.permanentNumber || '?';
+  document.getElementById('modal-driver-code').textContent = driver.code || '?';
+  document.getElementById('modal-driver-pos').textContent = `#${position}`;
+  document.getElementById('modal-driver-pts').textContent = points;
+  document.getElementById('modal-driver-team').textContent = team;
+  document.getElementById('modal-driver-wiki').href = driver.url;
+
+  // Update the star button
+  const starBtn = document.getElementById('modal-driver-star');
+  starBtn.classList.toggle('star-btn--active', isFav);
+  starBtn.dataset.driver = driver.driverId;
+
+  // Reset photo
+  const photo = document.getElementById('modal-driver-photo');
+  photo.hidden = true;
+
+  // Reset extract
+  document.getElementById('modal-driver-extract').textContent = 'Loading...';
+
+  // Show the modal
+  driverModal.removeAttribute('hidden');
+
+  // Fetch Wikipedia data
+  // Extract the page name from the Wikipedia URL
+  // e.g. https://en.wikipedia.org/wiki/Lewis_Hamilton → Lewis_Hamilton
+  try {
+    const pageName = driver.url.split('/wiki/')[1];
+    const wikiResponse = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${pageName}`);
+    const wikiData = await wikiResponse.json();
+
+    // Show the extract text
+    document.getElementById('modal-driver-extract').textContent = wikiData.extract || '';
+
+    // Show photo if available
+    if (wikiData.thumbnail) {
+      photo.src = wikiData.thumbnail.source;
+      photo.alt = `${driver.givenName} ${driver.familyName}`;
+      photo.hidden = false;
+    }
+  } catch (error) {
+    document.getElementById('modal-driver-extract').textContent = '';
+    console.error('Wikipedia fetch failed:', error);
+  }
+}
+
+// Close modal when X is clicked
+driverModalClose.addEventListener('click', () => {
+  driverModal.setAttribute('hidden', '');
+});
+
+// Handle star click inside the modal
+document.getElementById('modal-driver-star').addEventListener('click', () => {
+  if (!currentModalDriver) return;
+  toggleFavDriver(currentModalDriver.driverId);
+
+  // Update the star in the modal immediately
+  const isFav = favouriteDrivers.includes(currentModalDriver.driverId);
+  document.getElementById('modal-driver-star').classList.toggle('star-btn--active', isFav);
+});
+
 // ─── Drivers API ─────────────────────────────────────────────
 
 // The section where we'll render the drivers
@@ -289,7 +492,7 @@ function renderDrivers(drivers) {
     const isFav = favouriteDrivers.includes(driver.driverId);
 
     html += `
-      <div class="card">
+      <div class="card" data-driver-id="${driver.driverId}" style="cursor:pointer">
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div class="card__number">#${position}</div>
           <!-- Star button uses data-driver attribute instead of onclick -->
@@ -319,6 +522,20 @@ function renderDrivers(drivers) {
 
   html += '</div>';
   driversList.innerHTML = html;
+
+  // Add click listener to each card to open the modal
+  // We use event delegation on the list div
+  driversList.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      // Don't open modal if the star button was clicked
+      if (e.target.closest('.star-btn')) return;
+
+      // Find the driver object that matches this card
+      const driverId = card.dataset.driverId;
+      const driver = allDrivers.find(d => d.driverId === driverId);
+      if (driver) openDriverModal(driver);
+    });
+  });
 };
 
 
@@ -403,7 +620,7 @@ function renderTeams(teams) {
     const isFav = favouriteTeams.includes(team.constructorId);
 
     html += `
-      <div class="card">
+      <div class="card" data-team-id="${team.constructorId}" style="cursor:pointer">
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div class="card__number">#${position}</div>
           <!-- Star button uses data-team attribute instead of onclick -->
@@ -425,6 +642,16 @@ function renderTeams(teams) {
 
   html += '</div>';
   teamsList.innerHTML = html;
+
+  // Add click listener to each team card
+  teamsList.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.star-btn')) return;
+      const teamId = card.dataset.teamId;
+      const team = allTeams.find(t => t.constructorId === teamId);
+      if (team) openTeamModal(team);
+    });
+  });
 }
 
 // ─── Circuits API ───────────────────────────────────────────
@@ -498,7 +725,7 @@ function renderCircuits(circuits) {
     const isFav = favouriteCircuits.includes(circuit.circuitId);
 
     html += `
-      <div class="card circuit-card">
+      <div class="card circuit-card" data-circuit-id="${circuit.circuitId}" style="cursor:pointer">
         <!-- SVG track image, or a placeholder if not found -->
         <div class="circuit-card__map">
           ${
@@ -521,6 +748,16 @@ function renderCircuits(circuits) {
 
   html += '</div>';
   circuitsSection.innerHTML = html;
+
+  // Add click listener to each circuit card
+  circuitsSection.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.star-btn')) return;
+      const circuitId = card.dataset.circuitId;
+      const circuit = allCircuits.find(c => c.circuitId === circuitId);
+      if (circuit) openCircuitModal(circuit);
+    });
+  });
 }
 
 // ─── Calendar API ───────────────────────────────────────────

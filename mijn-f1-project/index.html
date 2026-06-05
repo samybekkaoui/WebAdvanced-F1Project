@@ -144,8 +144,150 @@
     </div>
   </footer>
 
-  <!-- Scroll to top button - only visible on mobile when scrolled down -->
+  <!-- Scroll to top button - only visible when scrolled down -->
   <button id="scroll-top" hidden>&#8679;</button>
+
+  <!-- Driver modal - hidden by default -->
+  <div id="driver-modal" class="modal-scrim" hidden>
+    <div class="modal">
+      <!-- Close button -->
+      <button class="modal__close" id="driver-modal-close">&times;</button>
+
+      <!-- Photo + name header -->
+      <div class="modal__head">
+        <img id="modal-driver-photo" class="modal__photo" src="" alt="" hidden>
+        <div>
+          <div id="modal-driver-name" class="modal__name"></div>
+          <div id="modal-driver-desc" class="modal__sub"></div>
+        </div>
+        <!-- Favourite star -->
+        <button class="star-btn" id="modal-driver-star">&#9733;</button>
+      </div>
+
+      <!-- Details grid -->
+      <div class="modal__body">
+        <div class="modal__grid">
+          <div class="modal__kv">
+            <div class="k">Nationality</div>
+            <div class="v" id="modal-driver-nationality"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Date of birth</div>
+            <div class="v" id="modal-driver-dob"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Number</div>
+            <div class="v" id="modal-driver-number"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Code</div>
+            <div class="v" id="modal-driver-code"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Championship position</div>
+            <div class="v" id="modal-driver-pos"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Points</div>
+            <div class="v" id="modal-driver-pts"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Team</div>
+            <div class="v" id="modal-driver-team"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Wikipedia</div>
+            <div class="v"><a id="modal-driver-wiki" href="" target="_blank">Read more</a></div>
+          </div>
+        </div>
+
+        <!-- Wikipedia extract -->
+        <p id="modal-driver-extract" class="modal__extract"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team modal - hidden by default -->
+  <div id="team-modal" class="modal-scrim" hidden>
+    <div class="modal">
+      <button class="modal__close" id="team-modal-close">&times;</button>
+
+      <div class="modal__head">
+        <img id="modal-team-photo" class="modal__photo" src="" alt="" hidden>
+        <div>
+          <div id="modal-team-name" class="modal__name"></div>
+          <div id="modal-team-desc" class="modal__sub"></div>
+        </div>
+        <button class="star-btn" id="modal-team-star">&#9733;</button>
+      </div>
+
+      <div class="modal__body">
+        <div class="modal__grid">
+          <div class="modal__kv">
+            <div class="k">Nationality</div>
+            <div class="v" id="modal-team-nationality"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Championship position</div>
+            <div class="v" id="modal-team-pos"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Points</div>
+            <div class="v" id="modal-team-pts"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Wikipedia</div>
+            <div class="v"><a id="modal-team-wiki" href="" target="_blank">Read more</a></div>
+          </div>
+        </div>
+        <p id="modal-team-extract" class="modal__extract"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Circuit modal - hidden by default -->
+  <div id="circuit-modal" class="modal-scrim" hidden>
+    <div class="modal">
+      <button class="modal__close" id="circuit-modal-close">&times;</button>
+
+      <div class="modal__head">
+        <div>
+          <div id="modal-circuit-name" class="modal__name"></div>
+          <div id="modal-circuit-desc" class="modal__sub"></div>
+        </div>
+        <button class="star-btn" id="modal-circuit-star">&#9733;</button>
+      </div>
+
+      <div class="modal__body">
+        <div class="modal__grid">
+          <div class="modal__kv">
+            <div class="k">City</div>
+            <div class="v" id="modal-circuit-city"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Country</div>
+            <div class="v" id="modal-circuit-country"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Latitude</div>
+            <div class="v" id="modal-circuit-lat"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Longitude</div>
+            <div class="v" id="modal-circuit-lng"></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Google Maps</div>
+            <div class="v"><a id="modal-circuit-maps" href="" target="_blank">View on Maps</a></div>
+          </div>
+          <div class="modal__kv">
+            <div class="k">Wikipedia</div>
+            <div class="v"><a id="modal-circuit-wiki" href="" target="_blank">Read more</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="/src/main.js"></script>
 </body>
