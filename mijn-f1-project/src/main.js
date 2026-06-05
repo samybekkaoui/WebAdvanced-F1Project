@@ -73,6 +73,12 @@ const driversList = document.getElementById('drivers-list');
 // Store the fetched drivers so we can re-sort without fetching again
 let allDrivers = [];
 
+// Store driver standings so we can look up positions in the driver cards
+let allDriverStandings = [];
+
+// Store constructor standings so we can look up positions in the team cards
+let allConstructorStandings = [];
+
 // Fetch all drivers from the API
 async function loadDrivers() {
   try {
@@ -137,19 +143,28 @@ function renderDrivers(drivers) {
   let html = '<div class="cards-grid">';
 
   drivers.forEach(driver => {
+    // Look up this driver's current championship position
+    const standing = allDriverStandings.find(s => s.Driver.driverId === driver.driverId);
+    const position = standing ? standing.position : '?';
+    const points = standing ? standing.points : '?';
+
     html += `
       <div class="card">
-        <div class="card__number">${driver.permanentNumber || '?'}</div>
+        <div class="card__number">#${position}</div>
         <div class="card__name">${driver.givenName} ${driver.familyName}</div>
         <div class="card__meta">${driver.nationality}</div>
         <div class="card__stats">
           <div>
-            <div class="k">Code</div>
-            <div class="v">${driver.code || '?'}</div>
+            <div class="k">Number</div>
+            <div class="v">${driver.permanentNumber || '?'}</div>
           </div>
           <div>
-            <div class="k">Born</div>
-            <div class="v">${driver.dateOfBirth || '?'}</div>
+            <div class="k">Points</div>
+            <div class="v">${points}</div>
+          </div>
+          <div>
+            <div class="k">Code</div>
+            <div class="v">${driver.code || '?'}</div>
           </div>
         </div>
       </div>
@@ -233,13 +248,20 @@ function renderTeams(teams) {
 
   // Loop over each team and create a card
   teams.forEach(team => {
+    // Look up this team's current championship position
+    const standing = allConstructorStandings.find(s => s.Constructor.constructorId === team.constructorId);
+    const position = standing ? standing.position : '?';
+    const points = standing ? standing.points : '?';
+
     html += `
       <div class="card">
+        <div class="card__number">#${position}</div>
         <div class="card__name">${team.name}</div>
+        <div class="card__meta">${team.nationality}</div>
         <div class="card__stats">
           <div>
-            <div class="k">Nationality</div>
-            <div class="v">${team.nationality}</div>
+            <div class="k">Points</div>
+            <div class="v">${points}</div>
           </div>
         </div>
       </div>
@@ -366,9 +388,13 @@ async function loadDriverStandings() {
     const data = await response.json();
 
     // The standings are nested a few levels deep
-    const standings = data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
+    allDriverStandings = data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
 
-    renderDriverStandings(standings);
+    renderDriverStandings(allDriverStandings);
+
+    // Re-render driver cards now that we have standings
+    if (allDrivers.length > 0) renderDrivers(allDrivers);
+
   } catch (error) {
     driverStandingsDiv.innerHTML = '<h3>Drivers</h3><p>Failed to load.</p>';
     console.error('Error fetching driver standings:', error);
@@ -400,9 +426,13 @@ async function loadConstructorStandings() {
     const data = await response.json();
 
     // Same nested structure as driver standings
-    const standings = data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
+    allConstructorStandings = data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
 
-    renderConstructorStandings(standings);
+    renderConstructorStandings(allConstructorStandings);
+
+    // Re-render team cards now that we have standings
+    if (allTeams.length > 0) renderTeams(allTeams);
+
   } catch (error) {
     constructorStandingsDiv.innerHTML = '<h3>Constructors</h3><p>Failed to load.</p>';
     console.error('Error fetching constructor standings:', error);
