@@ -63,6 +63,63 @@ tabButtons.forEach(btn => {
 });
 
 
+// ─── Favourites ───────────────────────────────────────────
+
+// Load favourites from localStorage, or start with empty arrays
+// We store them as JSON strings, so we need to parse them back
+let favouriteDrivers = JSON.parse(localStorage.getItem('fav-drivers') || '[]');
+let favouriteTeams = JSON.parse(localStorage.getItem('fav-teams') || '[]');
+let favouriteCircuits = JSON.parse(localStorage.getItem('fav-circuits') || '[]');
+
+// Toggle a driver favourite on/off
+function toggleFavDriver(driverId) {
+  // Check if it's already a favourite
+  if (favouriteDrivers.includes(driverId)) {
+    favouriteDrivers = favouriteDrivers.filter(id => id !== driverId);
+  } else {
+    favouriteDrivers.push(driverId);
+  }
+  // Save the updated array back to localStorage
+  localStorage.setItem('fav-drivers', JSON.stringify(favouriteDrivers));
+  renderDrivers(allDrivers);
+}
+
+// Toggle a team favourite on/off
+function toggleFavTeam(teamId) {
+  if (favouriteTeams.includes(teamId)) {
+    favouriteTeams = favouriteTeams.filter(id => id !== teamId);
+  } else {
+    favouriteTeams.push(teamId);
+  }
+  localStorage.setItem('fav-teams', JSON.stringify(favouriteTeams));
+  renderTeams(allTeams);
+}
+
+// Toggle a circuit favourite on/off
+function toggleFavCircuit(circuitId) {
+  if (favouriteCircuits.includes(circuitId)) {
+    favouriteCircuits = favouriteCircuits.filter(id => id !== circuitId);
+  } else {
+    favouriteCircuits.push(circuitId);
+  }
+  localStorage.setItem('fav-circuits', JSON.stringify(favouriteCircuits));
+  renderCircuits(allCircuits);
+}
+
+// Use event delegation on the whole page for star buttons
+// This works even after re-renders because we listen on document
+document.addEventListener('click', (e) => {
+  // Check if the clicked element is a star button
+  if (!e.target.classList.contains('star-btn')) return;
+
+  const btn = e.target;
+
+  // Check which type of star was clicked using data attributes
+  if (btn.dataset.driver) toggleFavDriver(btn.dataset.driver);
+  if (btn.dataset.team) toggleFavTeam(btn.dataset.team);
+  if (btn.dataset.circuit) toggleFavCircuit(btn.dataset.circuit);
+});
+
 // ─── Drivers API ─────────────────────────────────────────────
 
 // The section where we'll render the drivers
@@ -148,9 +205,18 @@ function renderDrivers(drivers) {
     const position = standing ? standing.position : '?';
     const points = standing ? standing.points : '?';
 
+    // Check if this driver is a favourite
+    const isFav = favouriteDrivers.includes(driver.driverId);
+
     html += `
       <div class="card">
-        <div class="card__number">#${position}</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div class="card__number">#${position}</div>
+          <!-- Star button uses data-driver attribute instead of onclick -->
+          <button class="star-btn ${isFav ? 'star-btn--active' : ''}" data-driver="${driver.driverId}">
+            &#9733;
+          </button>
+        </div>
         <div class="card__name">${driver.givenName} ${driver.familyName}</div>
         <div class="card__meta">${driver.nationality}</div>
         <div class="card__stats">
@@ -253,9 +319,18 @@ function renderTeams(teams) {
     const position = standing ? standing.position : '?';
     const points = standing ? standing.points : '?';
 
+    // Check if this team is a favourite
+    const isFav = favouriteTeams.includes(team.constructorId);
+
     html += `
       <div class="card">
-        <div class="card__number">#${position}</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div class="card__number">#${position}</div>
+          <!-- Star button uses data-team attribute instead of onclick -->
+          <button class="star-btn ${isFav ? 'star-btn--active' : ''}" data-team="${team.constructorId}">
+            &#9733;
+          </button>
+        </div>
         <div class="card__name">${team.name}</div>
         <div class="card__meta">${team.nationality}</div>
         <div class="card__stats">
@@ -276,6 +351,9 @@ function renderTeams(teams) {
 
 // The section where we'll render the circuits
 const circuitsSection = document.getElementById('tab-circuits');
+
+// Store circuits so we can re-render when favourites change
+let allCircuits = [];
 
 // Mapping from Jolpica circuitId to the SVG filename in the GitHub repo
 // Source: https://github.com/julesr0y/f1-circuits-svg
@@ -318,9 +396,9 @@ async function loadCircuits() {
     const data = await response.json();
 
     // Jolpica stores circuits under CircuitTable.Circuits
-    const circuits = data.MRData.CircuitTable.Circuits;
+    allCircuits = data.MRData.CircuitTable.Circuits;
 
-    renderCircuits(circuits);
+    renderCircuits(allCircuits);
   } catch (error) {
     circuitsSection.innerHTML = '<h2>Circuits</h2><p>Failed to load circuits. Please try again.</p>';
     console.error('Error fetching circuits:', error);
@@ -336,6 +414,9 @@ function renderCircuits(circuits) {
     const svgName = circuitSvgMap[circuit.circuitId];
     const svgUrl = svgName ? `${SVG_BASE}${svgName}.svg` : null;
 
+    // Check if this circuit is a favourite
+    const isFav = favouriteCircuits.includes(circuit.circuitId);
+
     html += `
       <div class="card circuit-card">
         <!-- SVG track image, or a placeholder if not found -->
@@ -346,7 +427,13 @@ function renderCircuits(circuits) {
               : `<span class="circuit-card__no-img">No image</span>`
           }
         </div>
-        <div class="card__name">${circuit.circuitName}</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div class="card__name">${circuit.circuitName}</div>
+          <!-- Star button uses data-circuit attribute instead of onclick -->
+          <button class="star-btn ${isFav ? 'star-btn--active' : ''}" data-circuit="${circuit.circuitId}">
+            &#9733;
+          </button>
+        </div>
         <div class="card__meta">${circuit.Location.locality}, ${circuit.Location.country}</div>
       </div>
     `;
