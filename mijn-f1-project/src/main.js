@@ -445,16 +445,26 @@ async function loadDrivers() {
 // Sort drivers when dropdown changes
 document.getElementById('drivers-sort').addEventListener('change', (e) => {
   const value = e.target.value;
+  if (value === 'default') return;
 
-  // Use a ternary to decide sort direction
-  const sorted = allDrivers.slice().sort((a, b) =>
-    value === 'az'
-      ? a.familyName.localeCompare(b.familyName)
-      : b.familyName.localeCompare(a.familyName)
-  );
+  const sorted = allDrivers.slice().sort((a, b) => {
+    if (value === 'az') return a.familyName.localeCompare(b.familyName);
+    if (value === 'za') return b.familyName.localeCompare(a.familyName);
 
-  // Only re-render if a real option was chosen
-  if (value !== 'default') renderDrivers(sorted);
+    // Sort by car number — drivers without a number go to the end
+    if (value === 'number-asc') return (parseInt(a.permanentNumber) || 99) - (parseInt(b.permanentNumber) || 99);
+    if (value === 'number-desc') return (parseInt(b.permanentNumber) || 99) - (parseInt(a.permanentNumber) || 99);
+
+    // Sort by championship position using allDriverStandings
+    if (value === 'position') {
+      const posA = allDriverStandings.findIndex(s => s.Driver.driverId === a.driverId);
+      const posB = allDriverStandings.findIndex(s => s.Driver.driverId === b.driverId);
+      // Drivers not in standings go to the end
+      return (posA === -1 ? 999 : posA) - (posB === -1 ? 999 : posB);
+    }
+  });
+
+  renderDrivers(sorted);
 });
 
 // Search drivers as the user types
@@ -575,16 +585,21 @@ async function loadConstructors() {
 // Sort teams when dropdown changes
 document.getElementById('teams-sort').addEventListener('change', (e) => {
   const value = e.target.value;
+  if (value === 'default') return;
 
-  // Use a ternary to decide sort direction
-  const sorted = allTeams.slice().sort((a, b) =>
-    value === 'az'
-      ? a.name.localeCompare(b.name)
-      : b.name.localeCompare(a.name)
-  );
+  const sorted = allTeams.slice().sort((a, b) => {
+    if (value === 'az') return a.name.localeCompare(b.name);
+    if (value === 'za') return b.name.localeCompare(a.name);
 
-  // Only re-render if a real option was chosen
-  if (value !== 'default') renderTeams(sorted);
+    // Sort by championship position using allConstructorStandings
+    if (value === 'position') {
+      const posA = allConstructorStandings.findIndex(s => s.Constructor.constructorId === a.constructorId);
+      const posB = allConstructorStandings.findIndex(s => s.Constructor.constructorId === b.constructorId);
+      return (posA === -1 ? 999 : posA) - (posB === -1 ? 999 : posB);
+    }
+  });
+
+  renderTeams(sorted);
 });
 
 // Search teams as the user types
