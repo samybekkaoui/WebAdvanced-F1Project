@@ -432,6 +432,9 @@ async function loadDrivers() {
     // Show the drivers on the page (default order from API)
     renderDrivers(allDrivers);
 
+    // Update home favourites now that drivers are loaded
+    renderHomeFavourites();
+
   } catch (error) {
     // If something goes wrong, show an error message
     driversList.innerHTML = '<p>Failed to load drivers. Please try again.</p>';
@@ -539,6 +542,8 @@ function renderDrivers(drivers) {
 };
 
 
+
+// ─── Teams API ─────────────────────────────────────────────
 
 // Section where we'll render the teams
 const teamsSection = document.getElementById('tab-teams');
@@ -781,6 +786,9 @@ async function loadCalendar() {
     allRaces = data.MRData.RaceTable.Races;
 
     renderCalendar(allRaces);
+
+    // Update home page next race now that calendar is loaded
+    renderNextRace();
   } catch (error) {
     calendarList.innerHTML = '<p>Failed to load calendar. Please try again.</p>';
     console.error('Error fetching calendar:', error);
@@ -858,6 +866,10 @@ async function loadDriverStandings() {
     // Re-render driver cards now that we have standings
     if (allDrivers.length > 0) renderDrivers(allDrivers);
 
+    // Update home page hero stats now that standings are loaded
+    renderHomeStandings();
+    renderChampionshipBattle();
+
   } catch (error) {
     driverStandingsDiv.innerHTML = '<h3>Drivers</h3><p>Failed to load.</p>';
     console.error('Error fetching driver standings:', error);
@@ -911,6 +923,10 @@ async function loadConstructorStandings() {
     // Re-render team cards now that we have standings
     if (allTeams.length > 0) renderTeams(allTeams);
 
+    // Update home page hero stats now that constructor standings are loaded
+    renderHomeStandings();
+    renderChampionshipBattle();
+
   } catch (error) {
     constructorStandingsDiv.innerHTML = '<h3>Constructors</h3><p>Failed to load.</p>';
     console.error('Error fetching constructor standings:', error);
@@ -948,6 +964,207 @@ function renderConstructorStandings(standings) {
   constructorStandingsDiv.innerHTML = html;
 }
 
+// ─── Home page ───────────────────────────────────────────
+
+// Main function that loads all home page content
+async function loadHome() {
+  try {
+    // Fetch the results of the last race
+    const response = await fetch('https://api.jolpi.ca/ergast/f1/2026/last/results/');
+    const data = await response.json();
+    const race = data.MRData.RaceTable.Races[0];
+
+    // Render each section of the home page
+    renderLastRace(race);
+    renderNextRace();           // uses allRaces, already fetched by loadCalendar()
+    renderChampionshipBattle(); // uses allDriverStandings, already fetched
+    renderHomeStandings();      // fills in hero stats
+    renderHomeFavourites();     // shows starred drivers/teams/circuits
+  } catch (error) {
+    console.error('Error loading home:', error);
+  }
+}
+
+// Fill in the hero section stats: driver leader, constructor leader, races left
+function renderHomeStandings() {
+  // If standings haven't loaded yet, skip — they'll call this again when ready
+  if (!allDriverStandings.length || !allConstructorStandings.length) return;
+
+  const driverLeader = allDriverStandings[0];
+  const teamLeader = allConstructorStandings[0];
+
+  // Count races that haven't happened yet
+  const racesLeft = allRaces.filter(r => new Date(r.date) >= today).length;
+
+  document.getElementById('home-driver-leader').textContent =
+    `${driverLeader.Driver.givenName} ${driverLeader.Driver.familyName} (${driverLeader.points} pts)`;
+  document.getElementById('home-team-leader').textContent =
+    `${teamLeader.Constructor.name} (${teamLeader.points} pts)`;
+  document.getElementById('home-races-to-go').textContent = racesLeft;
+}
+
+// Show the last race with podium (P1, P2, P3)
+function renderLastRace(race) {
+  // Only show the top 3 finishers
+  const top3 = race.Results.slice(0, 3);
+
+  const formattedDate = new Date(race.date).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'short', year: 'numeric'
+  });
+
+  let html = `
+    <div class="home-card__label">Last Race</div>
+    <div class="card__name">${race.raceName}</div>
+    <div class="card__meta">${formattedDate}</div>
+  `;
+
+  // Loop over P1, P2, P3 and create a podium row for each
+  top3.forEach(result => {
+    const isFirst = result.position === '1';
+    html += `
+      <div class="podrow ${isFirst ? 'podrow--first' : ''}">
+        <div class="podrow__pos">P${result.position}</div>
+        <div class="podrow__name">${result.Driver.givenName} ${result.Driver.familyName}</div>
+        <div class="podrow__team">${result.Constructor.name}</div>
+      </div>
+    `;
+  });
+
+  document.getElementById('home-last-race').innerHTML = html;
+}
+
+// Show the next upcoming race from the calendar
+function renderNextRace() {
+  // Find the first race in allRaces that hasn't happened yet
+  const next = allRaces.find(r => new Date(r.date) >= today);
+
+  // If no upcoming race found, the season is over
+  if (!next) {
+    document.getElementById('home-next-race').innerHTML =
+      '<div class="home-card__label">Next Race</div><p>Season finished!</p>';
+    return;
+  }
+
+  const formattedDate = new Date(next.date).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'short', year: 'numeric'
+  });
+
+  document.getElementById('home-next-race').innerHTML = `
+    <div class="home-card__label">Next Race</div>
+    <div class="card__name">${next.raceName}</div>
+    <div class="card__meta">${next.Circuit.circuitName}</div>
+    <div class="card__meta">${next.Circuit.Location.country}</div>
+    <div style="margin-top: auto; font-weight: 700; font-size: 15px;">${formattedDate}</div>
+  `;
+}
+
+// Show the points gap between P1 and P2 in the drivers championship
+function renderChampionshipBattle() {
+  if (!allDriverStandings.length) return;
+
+  const p1 = allDriverStandings[0];
+  const p2 = allDriverStandings[1];
+
+  // Calculate the points gap between leader and second place
+  const gap = parseFloat(p1.points) - parseFloat(p2.points);
+
+  document.getElementById('home-championship-battle').innerHTML = `
+    <div class="home-card__label">Championship Battle</div>
+    <div class="card__name">${p1.Driver.familyName} vs ${p2.Driver.familyName}</div>
+    <div class="card__meta">${p1.Constructors[0].name} vs ${p2.Constructors[0].name}</div>
+    <div class="podrow" style="margin-top: 8px;">
+      <div class="podrow__pos">P1</div>
+      <div class="podrow__name">${p1.Driver.familyName}</div>
+      <div class="podrow__team">${p1.points} pts</div>
+    </div>
+    <div class="podrow">
+      <div class="podrow__pos">P2</div>
+      <div class="podrow__name">${p2.Driver.familyName}</div>
+      <div class="podrow__team">${p2.points} pts</div>
+    </div>
+    <div style="font-size: 13px; color: var(--ink-3); margin-top: 4px;">Gap: ${gap} points</div>
+  `;
+}
+
+// Show favourited drivers, teams and circuits on the home page
+// Each card opens its corresponding modal when clicked
+function renderHomeFavourites() {
+  // Drivers
+  const favDriversDiv = document.getElementById('home-fav-drivers');
+  if (favouriteDrivers.length === 0) {
+    favDriversDiv.innerHTML = '<p style="color: var(--ink-3); font-size: 14px;">No favourite drivers yet. Star a driver to add them here.</p>';
+  } else {
+    const drivers = allDrivers.filter(d => favouriteDrivers.includes(d.driverId));
+    favDriversDiv.innerHTML = `
+      <p style="font-size: 13px; color: var(--ink-3); margin-bottom: 8px;">DRIVERS</p>
+      <div class="cards-grid">${drivers.map(d => `
+        <div class="card" data-driver-id="${d.driverId}" style="cursor:pointer">
+          <div class="card__name">${d.givenName} ${d.familyName}</div>
+          <div class="card__meta">${d.nationality}</div>
+        </div>
+      `).join('')}</div>
+    `;
+
+    // Add click listeners to open the driver modal
+    favDriversDiv.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        const driver = allDrivers.find(d => d.driverId === card.dataset.driverId);
+        if (driver) openDriverModal(driver);
+      });
+    });
+  }
+
+  // Teams
+  const favTeamsDiv = document.getElementById('home-fav-teams');
+  if (favouriteTeams.length === 0) {
+    favTeamsDiv.innerHTML = '';
+  } else {
+    const teams = allTeams.filter(t => favouriteTeams.includes(t.constructorId));
+    favTeamsDiv.innerHTML = `
+      <p style="font-size: 13px; color: var(--ink-3); margin: 16px 0 8px;">TEAMS</p>
+      <div class="cards-grid">${teams.map(t => `
+        <div class="card" data-team-id="${t.constructorId}" style="cursor:pointer">
+          <div class="card__name">${t.name}</div>
+          <div class="card__meta">${t.nationality}</div>
+        </div>
+      `).join('')}</div>
+    `;
+
+    // Add click listeners to open the team modal
+    favTeamsDiv.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        const team = allTeams.find(t => t.constructorId === card.dataset.teamId);
+        if (team) openTeamModal(team);
+      });
+    });
+  }
+
+  // Circuits
+  const favCircuitsDiv = document.getElementById('home-fav-circuits');
+  if (favouriteCircuits.length === 0) {
+    favCircuitsDiv.innerHTML = '';
+  } else {
+    const circuits = allCircuits.filter(c => favouriteCircuits.includes(c.circuitId));
+    favCircuitsDiv.innerHTML = `
+      <p style="font-size: 13px; color: var(--ink-3); margin: 16px 0 8px;">CIRCUITS</p>
+      <div class="cards-grid">${circuits.map(c => `
+        <div class="card" data-circuit-id="${c.circuitId}" style="cursor:pointer">
+          <div class="card__name">${c.circuitName}</div>
+          <div class="card__meta">${c.Location.locality}, ${c.Location.country}</div>
+        </div>
+      `).join('')}</div>
+    `;
+
+    // Add click listeners to open the circuit modal
+    favCircuitsDiv.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        const circuit = allCircuits.find(c => c.circuitId === card.dataset.circuitId);
+        if (circuit) openCircuitModal(circuit);
+      });
+    });
+  }
+}
+
 // Run the fetch when the page loads
 loadDrivers();
 loadConstructors();
@@ -955,4 +1172,5 @@ loadCircuits();
 loadCalendar();
 loadDriverStandings();
 loadConstructorStandings();
+loadHome();
 

@@ -456,6 +456,134 @@ body.dark .circuit-card__map img { filter: invert(1); }
 
 #scroll-top:hover { background: var(--ink); }
 
+/* ─── Home page ───────────────────────────────────────── */
+
+/* Hero section - dark background */
+.hero {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 20px;
+}
+
+.hero__eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.hero__title {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.hero__title span { color: var(--accent); }
+
+.hero__sub {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 24px;
+}
+
+/* Stats row inside the hero */
+.hero__stats {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  border-top: 1px solid #333;
+  padding-top: 20px;
+}
+
+.hero__stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+}
+
+.hero__stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* 3 column grid for last race, next race, championship battle */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+/* Home cards */
+.home-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Label at the top of each home card */
+.home-card__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Podium rows in last race card */
+.podrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.podrow__pos {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--ink-3);
+  width: 20px;
+}
+
+/* Gold for P1 */
+.podrow--first .podrow__pos { color: #f59e0b; }
+
+.podrow__name {
+  font-weight: 600;
+  font-size: 14px;
+  flex: 1;
+}
+
+.podrow__team {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* Favourites section */
+#home-favourites {
+  margin-top: 8px;
+}
+
+#home-favourites h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+/* Responsive home grid */
+@media (max-width: 860px) {
+  .home-grid { grid-template-columns: 1fr; }
+}
+
 /* ─── Responsive ──────────────────────────────────────── */
 
 /* Tablet */

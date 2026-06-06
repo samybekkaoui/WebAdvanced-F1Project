@@ -63,8 +63,58 @@
       <!-- JS will show/hide these based on which tab is clicked. -->
 
       <section id="tab-home">
-        <h2>Home</h2>
-        <p>Welcome to Pitwall, your F1 data hub. More content coming soon.</p>
+        <!-- Hero sectie -->
+        <div class="hero">
+          <div class="hero__eyebrow">2026 Formula 1 World Championship</div>
+          <div class="hero__title">PITWALL</div>
+          <div class="hero__sub">Your live F1 data hub. Drivers, teams, standings and more.</div>
+          <div class="hero__stats">
+            <div>
+              <div class="hero__stat-label">Driver leader</div>
+              <div class="hero__stat-value" id="home-driver-leader">Loading...</div>
+            </div>
+            <div>
+              <div class="hero__stat-label">Constructor leader</div>
+              <div class="hero__stat-value" id="home-team-leader">Loading...</div>
+            </div>
+            <div>
+              <div class="hero__stat-label">Races to go</div>
+              <div class="hero__stat-value" id="home-races-to-go">Loading...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid with last race, next race, championship battle -->
+        <div class="home-grid">
+
+          <!-- Last race card -->
+          <div class="card home-card" id="home-last-race">
+            <div class="home-card__label">Last Race</div>
+            <p>Loading...</p>
+          </div>
+
+          <!-- Next race card -->
+          <div class="card home-card" id="home-next-race">
+            <div class="home-card__label">Next Race</div>
+            <p>Loading...</p>
+          </div>
+
+          <!-- Championship battle card -->
+          <div class="card home-card" id="home-championship-battle">
+            <div class="home-card__label">Championship Battle</div>
+            <p>Loading...</p>
+          </div>
+
+        </div>
+
+        <!-- Favourites section -->
+        <div id="home-favourites">
+          <h3>Your Favourites</h3>
+          <div id="home-fav-drivers"></div>
+          <div id="home-fav-teams"></div>
+          <div id="home-fav-circuits"></div>
+        </div>
+
       </section>
 
       <section id="tab-standings" hidden>
