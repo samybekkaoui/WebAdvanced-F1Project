@@ -237,6 +237,106 @@ body.dark {
 .card__stats .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); }
 .card__stats .v { font-size: 15px; font-weight: 700; }
 
+/* ─── Toolbar (search + sort/filter controls) ────────────── */
+
+/* Wrapper that holds the search input and dropdowns */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;        /* wraps to next line on mobile */
+  margin-bottom: 16px;
+}
+
+/* Search input wrapper */
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 9px 14px;
+  flex: 1;                /* takes up remaining space */
+  min-width: 180px;
+  transition: border-color .15s;
+}
+
+/* Highlight border when focused */
+.search-wrap:focus-within {
+  border-color: var(--accent);
+}
+
+/* The actual text input */
+.search-wrap input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  width: 100%;
+}
+
+.search-wrap input::placeholder {
+  color: var(--ink-3);
+}
+
+/* Search icon */
+.search-wrap__icon {
+  font-size: 14px;
+  color: var(--ink-3);
+  flex: none;
+}
+
+/* Sort and filter dropdowns */
+.toolbar select {
+  appearance: none;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 9px 34px 9px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .15s;
+  /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.toolbar select:hover {
+  border-color: var(--ink-3);
+}
+
+.toolbar select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Validation error message */
+.search-error {
+  font-size: 12px;
+  color: var(--accent);
+  margin-top: -10px;      /* pull it closer to the input */
+  margin-bottom: 4px;
+}
+
+/* On mobile: stack search and dropdowns vertically */
+@media (max-width: 540px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;  /* full width on mobile */
+  }
+
+  .toolbar select {
+    width: 100%;
+  }
+}
+
 /* ─── Star / favourite button ──────────────────────────── */
 
 .star-btn {

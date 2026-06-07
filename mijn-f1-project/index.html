@@ -135,10 +135,11 @@
 
       <section id="tab-drivers" hidden>
         <h2>Drivers</h2>
-        <!-- Search input + sort dropdown -->
-        <div>
-          <input id="drivers-search" type="text" placeholder="Search drivers...">
-          <p id="drivers-search-error" style="color: red; display: none;">Please enter at least 2 characters.</p>
+        <!-- Search + sort toolbar -->
+        <div class="toolbar">
+          <div class="search-wrap">
+            <input id="drivers-search" type="text" placeholder="Search drivers...">
+          </div>
           <select id="drivers-sort">
             <option value="default">Sort by...</option>
             <option value="az">Name A → Z</option>
@@ -148,16 +149,18 @@
             <option value="position">Championship position</option>
           </select>
         </div>
+        <p id="drivers-search-error" class="search-error" style="display:none;">Please enter at least 2 characters.</p>
         <!-- Drivers list gets rendered here by JS -->
         <div id="drivers-list"></div>
       </section>
 
       <section id="tab-teams" hidden>
         <h2>Teams</h2>
-        <!-- Search input + sort dropdown -->
-        <div>
-          <input id="teams-search" type="text" placeholder="Search teams...">
-          <p id="teams-search-error" style="color: red; display: none;">Please enter at least 2 characters.</p>
+        <!-- Search + sort toolbar -->
+        <div class="toolbar">
+          <div class="search-wrap">
+            <input id="teams-search" type="text" placeholder="Search teams...">
+          </div>
           <select id="teams-sort">
             <option value="default">Sort by...</option>
             <option value="az">Name A → Z</option>
@@ -165,18 +168,21 @@
             <option value="position">Championship position</option>
           </select>
         </div>
+        <p id="teams-search-error" class="search-error" style="display:none;">Please enter at least 2 characters.</p>
         <!-- Teams list gets rendered here by JS -->
         <div id="teams-list"></div>
       </section>
 
       <section id="tab-calendar" hidden>
         <h2>Calendar</h2>
-        <!-- Filter dropdown -->
-        <select id="calendar-filter">
-          <option value="all">All races</option>
-          <option value="past">Past races</option>
-          <option value="upcoming">Upcoming races</option>
-        </select>
+        <!-- Filter toolbar -->
+        <div class="toolbar">
+          <select id="calendar-filter">
+            <option value="all">All races</option>
+            <option value="past">Past races</option>
+            <option value="upcoming">Upcoming races</option>
+          </select>
+        </div>
         <!-- Calendar list gets rendered here by JS -->
         <div id="calendar-list"></div>
       </section>
